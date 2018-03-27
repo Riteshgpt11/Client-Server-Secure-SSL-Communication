@@ -1,0 +1,106 @@
+#!/usr/bin/python
+from socket import socket,AF_INET,SOCK_STREAM
+import ssl, sys
+from ssl import wrap_socket
+s = socket(AF_INET,SOCK_STREAM)
+ssl_sock = ssl.wrap_socket(s)
+text = "cs5700spring2017 HELLO "
+def no_ssl_code():
+        try:
+                while True:
+                        data = s.recv(1024)
+                        entry = data.split(" ")
+                        if(entry[2] == "BYE\n"):
+                                print entry[1]
+                                s.close()
+                                break
+                        elif (entry[1] == "STATUS"):
+                                if (entry[3] == '+'):
+                                        sol = int(entry[2]) + int(entry[4])
+                                        solution = str (sol)
+                                        sol1= entry[0] + " " + solution + "\n"
+                                        s.send(sol1)
+                                elif (entry[3] == '-'):
+                                        sol = int(entry[2]) - int(entry[4])
+                                        solution = str (sol)
+                                        sol1 = entry[0] + " " + solution + "\n"
+                                        s.send(sol1)
+                                elif (entry[3] == '*'):
+                                        sol = int(entry[2]) * int(entry[4])
+                                        solution = str (sol)
+                                        sol1= entry[0] + " " + solution + "\n"
+                                        s.send(sol1)
+                                elif (entry[3] == '/'):
+                                        sol = int(int(entry[2]) / int(entry[4]))
+                                        solution = str (sol)
+                                        sol1= entry[0] + " " + solution + "\n"
+                                        s.send(sol1)
+        except Exception, e:
+                print e
+def ssl_code():
+	try:
+        	while True:
+                	data = ssl_sock.recv(1024)
+                        entry = data.split(" ")
+                        if(entry[2] == "BYE\n"):
+                        	print entry[1]
+                                ssl_sock.close()
+                                break
+                        elif (entry[1] == "STATUS"):
+                        	if (entry[3] == '+'):
+                                	sol = int(entry[2]) + int(entry[4])
+                                        solution = str (sol)
+                                        sol1= entry[0] + " " + solution + "\n"
+                                        ssl_sock.send(sol1)
+                                elif (entry[3] == '-'):
+                                        sol = int(entry[2]) - int(entry[4])
+                                        solution = str (sol)
+                                        sol1= entry[0] +" " + solution + "\n"
+                                        ssl_sock.send(sol1)
+                                elif (entry[3] == '*'):
+                                        sol = int(entry[2]) * int(entry[4])
+                                        solution = str (sol)
+                                        sol1= entry[0] + " " + solution + "\n"
+                                        ssl_sock.send(sol1)
+				elif (entry[3] == '*'):
+                                        sol = int(entry[2]) * int(entry[4])
+                                        solution = str (sol)
+                                        sol1= entry[0] + " " + solution + "\n"
+                                        ssl_sock.send(sol1)
+                                elif (entry[3] == '/'):
+                                        sol = int(int(entry[2]) / int(entry[4]))
+                                        solution = str (sol)
+                                        sol1= entry[0] + " " + solution + "\n"
+                                        ssl_sock.send(sol1)
+        except Exception, e:
+        	print e
+
+try:
+	if(sys.argv[1] != '-p'):
+            if(sys.argv[1] != '-s'):
+                s.connect((sys.argv[1], 27993))
+                s.send(text + sys.argv[2]+ "\n")
+                no_ssl_code()
+            else:
+                ssl_sock.connect((sys.argv[2], 27994))
+                ssl_sock.send(text + sys.argv[3] + "\n")
+		ssl_code()
+        else:
+            if(sys.argv[3] != '-s'):
+                if(int(sys.argv[2])==27993):
+                    s.connect((sys.argv[3],int(sys.argv[2])))
+                    s.send (text + sys.argv[4] + "\n")
+                    no_ssl_code()
+                    
+                else:
+                    print "Can't connect to this port"
+            else:
+                if(int(sys.argv[2])==27994):
+                    ssl_sock.connect((sys.argv[4], int(sys.argv[2])))
+                    ssl_sock.send(text + sys.argv[5] + "\n")
+		    ssl_code()
+		    
+                else:
+                    print "Can't connect to this port"
+except  Exception, e:
+   print e
